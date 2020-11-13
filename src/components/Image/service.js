@@ -1,24 +1,34 @@
-/* eslint-disable no-return-await */
 const ImageModel = require('./model');
 
-async function getAll() {
-  return await ImageModel.find({});
+function findAll() {
+  return ImageModel.find({});
 }
 
-async function getRange() {
-
+function getRange(firstDate, lastDate) {
+  return ImageModel.find({
+    date: {
+      $gte: new Date(firstDate),
+      $lt: new Date(lastDate),
+    },
+  });
 }
 
-async function resize() {
-
+function crop(width, height, x, y) {
+  return ImageModel.create({
+    type: 'Cropping',
+    parameters: [`width - ${width - x}`, `height - ${height - y}`, `x - ${x}`, `y - ${y}`],
+  });
 }
 
-async function crop() {
-
+function resize(width, height) {
+  return ImageModel.create({
+    type: 'Resizing',
+    parameters: [`width - ${width}`, `height - ${height}`],
+  });
 }
 
 module.exports = {
-  getAll,
+  findAll,
   getRange,
   resize,
   crop,
