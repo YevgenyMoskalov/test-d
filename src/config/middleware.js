@@ -46,7 +46,7 @@ function auth(req, res, next) {
 
 function tokenGeneration(user) {
   // eslint-disable-next-line no-underscore-dangle
-  jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
+  return jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
 }
 
 module.exports = {

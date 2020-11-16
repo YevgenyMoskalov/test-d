@@ -23,9 +23,7 @@ function signup(userData) {
 }
 
 async function signin(authData) {
-  console.log(authData);
-  const user = UserRepository.findByEmail(authData.email);
-  console.log(user);
+  const user = await UserRepository.findByEmail(authData.email);
   const valid = await bcrypt.compare(authData.password, user.password);
   if (!valid) {
     throw new Error('Wrong password!');
