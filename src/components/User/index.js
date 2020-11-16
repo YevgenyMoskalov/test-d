@@ -28,7 +28,7 @@ async function signin(req, res, next) {
     if (error) {
       throw new ValidationError(error.details);
     }
-    const user = UserService.signin(req.body);
+    const user = await UserService.signin(req.body);
     const token = tokenGeneration(user);
     res.status(200).json({
       token,
