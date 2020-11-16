@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const MONGO_URI = 'mongodb+srv://lesnoy:0661295391_As@cluster0.lyore.mongodb.net/Cluster0?retryWrites=true&w=majority';
-
+const MONGODB_URI = 'mongodb://localhost:27017/';
+const MONGODB_DB_MAIN = 'test-b';
+const MONGO_URI = `${MONGODB_URI}${MONGODB_DB_MAIN}`;
 const connectOptions = {
-
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };

@@ -4,7 +4,7 @@ const ValidationError = require('../../error/ValidationError');
 
 const { tokenGeneration } = require('../../config/middleware');
 
-async function signup(req, res, next) {
+async function signup(req, res) {
   try {
     const { error } = UserValidation.create(req.body);
     if (error) {
@@ -17,12 +17,15 @@ async function signup(req, res, next) {
       token,
       message: 'user created',
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({
+      err,
+    });
   }
 }
 
-async function signin(req, res, next) {
+async function signin(req, res) {
   try {
     const { error } = UserValidation.signin(req.body);
     if (error) {
@@ -34,12 +37,29 @@ async function signin(req, res, next) {
       token,
       user,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({
+      err,
+    });
   }
 }
 
+async function resetPassword(req, res) {
+  try {
+    await UserService.resetPassword(req.body.email);
+    res.status(200).json({
+      message: 'Sent!',
+    });
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({
+      err,
+    });
+  }
+}
 module.exports = {
   signup,
   signin,
+  resetPassword,
 };
