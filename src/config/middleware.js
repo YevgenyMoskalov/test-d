@@ -5,13 +5,15 @@ const helmet = require('helmet');
 const jwt = require('jsonwebtoken');
 const SECRET_TOKEN = require('./jwt').SECRET_JWT;
 
+const TOKEN_LIFETIME = '24h'; // 1 day
+const SECRET_KEY = require('./jwt').SECRET_JWT;
+
 function init(app) {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
-  app.use(cors());
   app.use(fileUpload({ createParentPath: true }));
-  app.use(helmet);
-
+  app.use(helmet());
+  app.use(cors());
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS ');
     res.header(
@@ -33,17 +35,22 @@ function auth(req, res, next) {
     const { userId } = decodedToken;
     if (req.body.userId && req.body.userId !== userId) {
       throw new Error('Invalid user ID');
-    } else {
-      next();
     }
+    next();
   } catch (e) {
     res.status(401).json({
-      error: e,
+      message: 'User unauthorized',
     });
   }
+}
+
+function tokenGeneration(user) {
+  // eslint-disable-next-line no-underscore-dangle
+  jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
 }
 
 module.exports = {
   auth,
   init,
+  tokenGeneration,
 };

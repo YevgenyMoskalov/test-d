@@ -16,6 +16,11 @@ const userSchema = new Schema({
     require: true,
     unique: true,
   },
+  role: {
+    type: String,
+    require: true,
+    default: 'user',
+  },
 });
 
 module.exports = connections.model('User', userSchema);
