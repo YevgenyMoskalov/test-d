@@ -1,11 +1,13 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const UserRepository = require('./repository');
 const UserError = require('../../error/UserAuthError');
 const UserMailer = require('./mailer');
+const authHelper = require('../../helpers/authHelper');
 
-function signup(userData) {
-  const userEmail = userData.email;
-  const userName = userData.name;
+function signup(user) {
+  const userEmail = user.email;
+  const userName = user.name;
   const userProfile = {
     email: userEmail,
     password: bcrypt.hashSync(userData.password, 10),
@@ -31,8 +33,19 @@ function resetPassword(email) {
   UserMailer.sendMail(email);
   // to do
 }
+
+async function updatesTokens(userId) {
+  const accessToken = authHelper.generateAccessToken(userId);
+  const refreshToken = authHelper.generateRefreshToken();
+  await authHelper.replaceRefreshToken(refreshToken.id, userId);
+  return {
+    accessToken,
+    refreshToken: refreshToken.token,
+  };
+}
 module.exports = {
   signup,
   signin,
   resetPassword,
+  updatesTokens,
 };

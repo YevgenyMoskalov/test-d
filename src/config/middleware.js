@@ -6,9 +6,8 @@ const helmet = require('helmet');
 const jwt = require('jsonwebtoken');
 const UserIdError = require('../error/UserIdentificationError');
 
-const { SECRET_TOKEN, TOKEN_LIFETIME } = process.env;
-
 function init(app) {
+  console.log(process.env.SECRET_KEY);
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(fileUpload({ createParentPath: true }));
@@ -32,8 +31,13 @@ function init(app) {
 function auth(req, res, next) {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, SECRET_TOKEN);
-    const { userId } = decodedToken;
+    const payload = jwt.verify(token, process.env.SECRET_KEY);
+    if (payload.type !== 'access') {
+      res.status(401).json({
+        message: 'Invalid token',
+      });
+    }
+    const { userId } = payload.userId;
     if (req.body.userId && req.body.userId !== userId) {
       throw new UserIdError('Invalid user ID');
     }
@@ -46,13 +50,7 @@ function auth(req, res, next) {
   }
 }
 
-function tokenGeneration(user) {
-  // eslint-disable-next-line no-underscore-dangle
-  return jwt.sign({ userId: user._id }, SECRET_TOKEN, { expiresIn: TOKEN_LIFETIME });
-}
-
 module.exports = {
   auth,
   init,
-  tokenGeneration,
 };
