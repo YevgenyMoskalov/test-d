@@ -10,7 +10,7 @@ function signup(user) {
   const userName = user.name;
   const userProfile = {
     email: userEmail,
-    password: bcrypt.hashSync(userData.password, 10),
+    password: bcrypt.hashSync(user.password, 10),
     name: userName,
   };
   return UserRepository.create(userProfile);

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const UserService = require('./service');
 const UserValidation = require('./validation');
 const ValidationError = require('../../error/ValidationError');
-const Token = require('./token');
+const Token = require('../Auth/token');
 
 async function signup(req, res) {
   try {
